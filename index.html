@@ -1,100 +1,169 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lista de asistencia · Scouts</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colonia Castores · Control scout</title>
 <style>
-:root{--bg:#EEF3EF;--surface:#fff;--ink:#14261B;--muted:#5E7266;--line:#D8E2DB;--green:#1F5A38;--green-soft:#DDF0E3;--yes:#2E9A57;--no:#D8503F;--no-soft:#FBE4E0;--sun:#F2B705;--on-green:#fff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A13;--surface:#16271C;--ink:#E7F1EA;--muted:#8FA597;--line:#26392D;--green:#58C282;--green-soft:#1C3A28;--yes:#4CC17B;--no:#EF7B6B;--no-soft:#3A201C;--on-green:#0E1A13;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0E1A13;--surface:#16271C;--ink:#E7F1EA;--muted:#8FA597;--line:#26392D;--green:#58C282;--green-soft:#1C3A28;--yes:#4CC17B;--no:#EF7B6B;--no-soft:#3A201C;--on-green:#0E1A13;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.4}
-button,input{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-.wrap{max-width:640px;margin:0 auto;padding:20px 16px 90px}
-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.logo{width:44px;height:44px;border-radius:14px;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-size:24px}
-h1{font-size:1.45rem;font-weight:800;margin:0;letter-spacing:-.02em}
-header p{margin:0;color:var(--muted);font-size:.9rem}
-.tabs{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px;margin-bottom:18px}
-.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:12px;font-weight:600;color:var(--muted)}
-.tabs button[aria-selected="true"]{background:var(--green);color:var(--on-green)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 6px;scrollbar-width:thin}
-.chip{flex:0 0 auto;min-width:64px;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:8px 10px;text-align:center;position:relative}
-.chip b{display:block;font-size:1.25rem;font-weight:800;line-height:1.1}
-.chip span{font-size:.75rem;color:var(--muted)}
-.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
-.chip[aria-pressed="true"] span{color:inherit;opacity:.85}
-.chip i{position:absolute;top:-5px;right:-3px;background:var(--sun);color:#3a2c00;font-style:normal;font-size:.62rem;font-weight:800;border-radius:8px;padding:1px 6px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:14px}
-.sum{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.sum h2{margin:0;font-size:1.1rem;font-weight:800;text-transform:capitalize}
-.count{font-size:2rem;font-weight:800;color:var(--green);line-height:1}
-.count small{font-size:.9rem;color:var(--muted);font-weight:600}
-.bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;display:flex;margin:12px 0 4px}
-.bar div{transition:width .3s}
-.bar .y{background:var(--yes)}.bar .n{background:var(--no)}
-.legend{font-size:.82rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
-.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-.row:first-child{border-top:0}
-.name{flex:1;font-weight:600;min-width:0;overflow-wrap:anywhere}
-.name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
-.tog{display:flex;gap:6px}
-.tog button{border:1.5px solid var(--line);background:none;border-radius:12px;padding:9px 13px;font-weight:600;min-width:62px}
-.tog .y[aria-pressed="true"]{background:var(--yes);border-color:var(--yes);color:#fff}
-.tog .n[aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
-.btn{border:0;background:var(--green);color:var(--on-green);padding:11px 16px;border-radius:14px;font-weight:600}
-.btn.ghost{background:var(--green-soft);color:var(--green)}
-.btn.danger{background:var(--no-soft);color:var(--no)}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.add{display:flex;gap:8px}
-input[type=text],input[type=date]{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:11px 14px}
-label{font-size:.85rem;color:var(--muted);display:block;margin-bottom:6px}
-.empty{text-align:center;color:var(--muted);padding:22px 8px}
-.del{border:0;background:var(--no-soft);color:var(--no);border-radius:12px;padding:8px 12px;font-weight:600}
-.hint{font-size:.82rem;color:var(--muted);margin:10px 0 0}
-#login{max-width:380px;margin:12vh auto 0;padding:0 16px}
-#login .panel{padding:24px}
-#login h1{margin-bottom:6px}
-.err{color:var(--no);font-size:.85rem;min-height:1.2em;margin:8px 0 0}
+:root{--green:#1d6b50;--green2:#e7f4ed;--ink:#20312b;--muted:#6b7b73;--line:#dce7e0;--paper:#f5f8f5;--orange:#f5b544;--red:#c64d4d;--blue:#dfeefa}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(120deg,#174e3c,#2b8764);color:white;padding:26px max(20px,calc((100vw - 1180px)/2));}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:54px;height:54px;border-radius:17px;background:#ffffff24;display:grid;place-items:center;font-size:29px}
+h1{font-size:clamp(24px,4vw,34px);line-height:1.1;margin:0 0 5px}header p{margin:0;color:#d9f0e4}
+nav{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}.tab{border:1px solid #ffffff55;color:white;background:#ffffff12;border-radius:999px;padding:10px 16px;cursor:pointer;font-weight:650}.tab.active{background:white;color:var(--green)}
+main{max-width:1180px;margin:24px auto;padding:0 18px 50px}.view{display:none}.view.active{display:block}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 4px 18px #193c2a08}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}h2{margin:0;font-size:21px}h3{margin:0 0 8px;font-size:16px}
+.muted{color:var(--muted)}.small{font-size:12px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-6{grid-column:span 6}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#43564c}input,textarea,select{width:100%;border:1px solid #cfdcd3;border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink);font:inherit}textarea{min-height:90px;resize:vertical}
+button{font:inherit;cursor:pointer}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:var(--green);color:white}.btn.secondary{background:var(--green2);color:var(--green)}.btn.ghost{background:white;border:1px solid var(--line);color:var(--ink)}.btn.danger{background:#fff0f0;color:#a52d2d}.btn.smallbtn{padding:7px 10px;font-size:13px}
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat{padding:15px;background:#f7faf7;border:1px solid var(--line);border-radius:14px}.stat strong{font-size:25px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.attendance-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.attendance-head select{width:auto;min-width:200px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:750;background:#edf4ef;color:#2a674c}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #e7eee9;vertical-align:middle}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.att-table{overflow-x:auto}.att-table table{min-width:650px}.namecell{font-weight:750}.statusset{display:flex;gap:6px;flex-wrap:wrap}.status{border:1px solid #d7e2da;background:white;color:#5d6c63;border-radius:8px;padding:7px 9px;font-size:12px;font-weight:700}.status.selected[data-status="presente"]{background:#def4e5;border-color:#85c69c;color:#17643b}.status.selected[data-status="ausente"]{background:#fff0dc;border-color:#edc47b;color:#8b5710}.status.selected[data-status="justificado"]{background:#e4efff;border-color:#a8c6f2;color:#285b9d}
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}.member-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.member-card{border:1px solid var(--line);border-radius:14px;padding:16px}.member-card-top{display:flex;justify-content:space-between;gap:10px}.member-card p{margin:7px 0;color:var(--muted);font-size:13px;white-space:pre-wrap}.badge{font-size:11px;border-radius:999px;padding:4px 8px;background:#f0f5f1;color:#496356}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}.notice{padding:12px 14px;background:#fff7df;border:1px solid #f2df9d;border-radius:12px;font-size:13px;color:#75591a}.footer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.custom-preview{margin:8px 0;min-height:52px;display:flex;align-items:center;gap:10px}
+.custom-preview img{max-width:100%;max-height:110px;object-fit:contain;border:1px solid var(--line);border-radius:10px;padding:4px;background:#fff}
+.banner-preview img{width:100%;max-height:100px;object-fit:cover}
+.logo img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.welcome-banner{margin-top:14px;padding:10px 13px;border-radius:10px;background:#ffffff18;color:white;white-space:pre-wrap}
+input[type=color]{height:46px;padding:5px;cursor:pointer}
+.login-gate{position:fixed;inset:0;z-index:1000;background:linear-gradient(140deg,#174e3c,#2b8764);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-gate.hidden{display:none}.login-card{width:min(100%,420px);background:#fff;border-radius:22px;padding:30px;box-shadow:0 24px 80px #102c1e55}
+.login-logo{font-size:42px;margin-bottom:8px}.login-eyebrow{font-size:11px;letter-spacing:.15em;font-weight:800;color:var(--green);margin:0 0 8px}
+.login-card h1{font-size:28px;color:var(--ink);margin-bottom:8px}.login-card label{margin-top:14px}
+.login-error{color:#b52e2e;font-size:13px;min-height:18px;margin:10px 0 0}
+.login-footnote{font-size:11px;color:var(--muted);margin:18px 0 0}
+.logout-tab{margin-left:auto}
+@media(max-width:720px){.logout-tab{margin-left:0}.login-card{padding:24px}}
+@media(max-width:720px){main{padding:0 12px 35px}.panel{padding:15px}.span-3,.span-4,.span-6,.span-8{grid-column:span 12}.statrow{grid-template-columns:repeat(2,1fr)}.member-grid{grid-template-columns:1fr}header{padding:22px 16px}th,td{padding:10px 7px}}
+@media print{header nav,.no-print,button{display:none!important}body{background:white}.panel{box-shadow:none;break-inside:avoid}main{max-width:none;margin:0;padding:0}.view{display:none!important}#attendance.view.active{display:block!important}}
 </style>
 </head>
 <body>
-<div id="login" hidden>
-  <div class="panel">
-    <div class="logo" aria-hidden="true" style="margin-bottom:14px">⚜</div>
-    <h1>Lista de asistencia</h1>
-    <p class="hint" style="margin:0 0 16px">Escribe el código de acceso de los monitores.</p>
-    <label for="pw">Código de acceso</label>
-    <div class="add"><input type="password" id="pw" autocomplete="current-password"><button class="btn" id="go">Entrar</button></div>
-    <p class="err" id="err" role="alert"></p>
-  </div>
+<div id="loginGate" class="login-gate">
+ <form id="loginForm" class="login-card">
+  <div class="login-logo">🦫</div>
+  <p class="login-eyebrow">GRUPO SCOUT LA NUCÍA</p>
+  <h1 id="loginTitle">Acceso privado</h1>
+  <p id="loginHelp" class="muted">Escribe el código de acceso de los monitores para ver la información de Castores.</p>
+  <label for="loginPassword">Código de acceso</label>
+  <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Código de acceso">
+  <p id="loginError" class="login-error" role="alert"></p>
+  <button class="btn" id="loginSubmit" type="submit" style="width:100%;margin-top:8px">Entrar</button>
+  <p class="login-footnote">Solo para monitores del grupo.</p>
+ </form>
 </div>
-<div class="wrap" hidden>
-  <header>
-    <div class="logo" aria-hidden="true">⚜</div>
-    <div><h1>Lista de asistencia</h1><p>Grupo scout · reunión de los sábados</p><p id="st" aria-live="polite" style="font-size:.78rem"></p></div><button class="del" id="out" style="margin-left:auto">Salir</button>
-  </header>
-  <div class="tabs" role="tablist">
-    <button role="tab" id="t-lista" aria-selected="true" data-tab="lista">Pasar lista</button>
-    <button role="tab" id="t-ninos" aria-selected="false" data-tab="ninos">Niños</button>
+<header>
+ <div class="brand"><div class="logo" id="brandLogo">🦫</div><div><h1 id="brandTitle">Colonia Castores</h1><p id="brandSubtitle">Control de asistencia · Grupo Scout La Nucía</p><p id="saveStatus" class="small" style="margin-top:4px;opacity:.85" aria-live="polite"></p></div></div><div id="welcomeBanner" class="welcome-banner" style="display:none"></div>
+ <nav class="no-print">
+  <button class="tab active" data-view="attendance">📋 Pasar lista</button>
+  <button class="tab" data-view="dates">🗓️ Días y programación</button>
+  <button class="tab" data-view="members">🌿 Integrantes</button>
+  <button class="tab" data-view="awards">🏅 Insignias y pañoleta</button>
+  <button class="tab" data-view="customize">🎨 Personalizar</button>
+  <button class="tab" data-view="backup">💾 Copia de seguridad</button>
+  <button class="tab logout-tab" id="logoutButton">↪ Cerrar sesión</button>
+ </nav>
+</header>
+<main>
+<section id="attendance" class="view active">
+ <div class="panel">
+  <div class="panel-head"><div><h2>Pasar lista</h2><div class="muted">Elige el día y marca la situación de cada castor.</div></div><span class="pill" id="datePill">Sin fecha</span></div>
+  <div class="grid">
+   <div class="span-4"><label for="attendanceDate">Día de actividad</label><select id="attendanceDate"></select></div>
+   <div class="span-8"><label>Resumen del día</label><div class="statrow" style="margin:0"><div class="stat"><strong id="countPresent">0</strong><span>Presentes</span></div><div class="stat"><strong id="countAbsent">0</strong><span>Sin asistir</span></div><div class="stat"><strong id="countExcused">0</strong><span>Justificados</span></div><div class="stat"><strong id="countPending">0</strong><span>Sin marcar</span></div></div></div>
   </div>
-  <main id="app"></main>
-</div>
-
+  <div id="sessionInfo" style="margin-top:16px"></div>
+ </div>
+ <div class="panel">
+  <div class="panel-head"><h2>Lista de la sección</h2><button class="btn secondary no-print" id="allPending">Restablecer marcas</button></div>
+  <div class="att-table" id="attendanceTable"></div>
+  <div class="footer-actions no-print"><button class="btn" id="saveAttendance">Guardar asistencia</button><button class="btn ghost" id="printAttendance">Imprimir / guardar PDF</button></div>
+ </div>
+</section>
+<section id="dates" class="view">
+ <div class="panel">
+  <div class="panel-head"><div><h2>Días y programación</h2><div class="muted">Añade las reuniones, cambia la fecha o indica que no hay actividad.</div></div><button class="btn" id="newDate">+ Añadir día</button></div>
+  <div id="dateList"></div>
+ </div>
+ <div class="panel" id="dateEditor">
+  <div class="panel-head"><h2 id="dateFormTitle">Crear día de actividad</h2><button class="btn ghost smallbtn" id="cancelDateEdit">Limpiar</button></div>
+  <form id="dateForm" class="grid">
+   <input type="hidden" id="editDateId">
+   <div class="span-4"><label for="dateInput">Fecha</label><input id="dateInput" type="date" required></div>
+   <div class="span-4"><label for="dateName">Nombre / tipo de actividad</label><input id="dateName" placeholder="Ej. Reunión de sábado"></div>
+   <div class="span-4"><label for="dateStatus">Estado</label><select id="dateStatus"><option value="actividad">Hay actividad</option><option value="sin actividad">No hay actividad</option></select></div>
+   <div class="span-12"><label for="dateDescription">Programación y observaciones del día</label><textarea id="dateDescription" placeholder="Horario, juegos, materiales, objetivos, lugar…"></textarea></div>
+   <div class="span-12"><button class="btn" type="submit">Guardar día</button></div>
+  </form>
+ </div>
+</section>
+<section id="members" class="view">
+ <div class="panel">
+  <div class="panel-head"><div><h2>Integrantes de la sección</h2><div class="muted">Guarda los datos útiles para la organización y el cuidado de cada niño o niña.</div></div><span class="pill" id="memberCount">0 integrantes</span></div>
+  <div id="memberList" class="member-grid"></div>
+ </div>
+ <div class="panel" id="memberEditor">
+  <div class="panel-head"><h2 id="memberFormTitle">Añadir integrante</h2><button class="btn ghost smallbtn" id="clearMemberForm">Limpiar</button></div>
+  <form id="memberForm" class="grid">
+   <input type="hidden" id="editMemberId">
+   <div class="span-6"><label for="memberName">Nombre y apellidos *</label><input id="memberName" required placeholder="Nombre del castor o castora"></div>
+   <div class="span-6"><label for="memberNickname">Nombre habitual (opcional)</label><input id="memberNickname" placeholder="Cómo le llamáis en la colonia"></div>
+   <div class="span-6"><label for="memberPhone">Teléfono de contacto familiar</label><input id="memberPhone" type="tel" placeholder="Teléfono de madre, padre o tutor/a"></div>
+   <div class="span-6"><label for="memberEmergency">Contacto alternativo (opcional)</label><input id="memberEmergency" placeholder="Nombre y teléfono"></div>
+   <div class="span-6"><label for="memberAllergies">Alergias / información importante</label><textarea id="memberAllergies" placeholder="Indica también si requiere alguna pauta de cuidado"></textarea></div>
+   <div class="span-6"><label for="memberNotes">Observaciones</label><textarea id="memberNotes" placeholder="Información útil para las actividades"></textarea></div>
+   <div class="span-12"><button class="btn" type="submit">Guardar integrante</button></div>
+  </form>
+ </div>
+ <div class="notice">Privacidad: estos datos (teléfonos y alergias de menores) están protegidos con el código de acceso. No lo compartas con personas ajenas al grupo y cierra sesión en dispositivos que no sean tuyos.</div>
+</section>
+<section id="awards" class="view">
+ <div class="panel">
+  <div class="panel-head"><div><h2>Insignias y pañoleta</h2><div class="muted">Registra qué ha conseguido cada castor, cuándo y dónde.</div></div></div>
+  <div class="grid"><div class="span-6"><label for="awardMemberSelect">Elegir castor o castora</label><select id="awardMemberSelect"><option value="">Primero añade integrantes</option></select></div><div class="span-6"><label>Progreso de insignias</label><div class="muted small">Puedes completar cada insignia cuando la consiga.</div></div></div>
+  <div id="awardEditor" style="margin-top:18px"><div class="empty">Añade integrantes en la pestaña «Integrantes» y selecciónalos aquí.</div></div>
+ </div>
+ <div class="panel"><h2>Resumen de la colonia</h2><p class="muted">Consulta rápidamente las insignias y la pañoleta conseguidas por cada integrante.</p><div id="awardSummary"></div></div>
+ <div class="notice">Consejo: guarda la fecha y el lugar de entrega para tener un historial de la progresión de cada castor.</div>
+</section>
+<section id="customize" class="view">
+ <div class="panel">
+  <div class="panel-head"><div><h2>Personalizar la web</h2><div class="muted">Cambia los textos principales, colores, imágenes y aspecto de la página.</div></div><span class="pill">Vista previa al guardar</span></div>
+  <form id="customForm" class="grid">
+   <div class="span-6"><label for="customTitle">Título principal</label><input id="customTitle" placeholder="Colonia Castores"></div>
+   <div class="span-6"><label for="customSubtitle">Subtítulo</label><input id="customSubtitle" placeholder="Control de asistencia · Grupo Scout La Nucía"></div>
+   <div class="span-4"><label for="customPrimary">Color principal</label><input id="customPrimary" type="color" value="#1d6b50"></div>
+   <div class="span-4"><label for="customHeader">Color de cabecera</label><input id="customHeader" type="color" value="#174e3c"></div>
+   <div class="span-4"><label for="customBackground">Fondo de página</label><input id="customBackground" type="color" value="#f5f8f5"></div>
+   <div class="span-6"><label for="customText">Color del texto</label><input id="customText" type="color" value="#20312b"></div>
+   <div class="span-6"><label for="customLogoEmoji">Icono / emoji (si no subes imagen)</label><input id="customLogoEmoji" maxlength="8" placeholder="🦫"></div>
+   <div class="span-6"><label for="customLogoFile">Imagen para el logotipo</label><input id="customLogoFile" type="file" accept="image/*"><p class="muted small">Mejor una imagen cuadrada. Se guarda en la nube.</p><div id="logoPreview" class="custom-preview"></div><button type="button" class="btn ghost smallbtn" id="removeLogo">Quitar imagen del logo</button></div>
+   <div class="span-6"><label for="customBannerFile">Imagen de fondo de la cabecera (opcional)</label><input id="customBannerFile" type="file" accept="image/*"><p class="muted small">La imagen se mostrará detrás del título con una capa de color.</p><div id="bannerPreview" class="custom-preview banner-preview"></div><button type="button" class="btn ghost smallbtn" id="removeBanner">Quitar imagen de cabecera</button></div>
+   <div class="span-12"><label for="customWelcome">Texto de bienvenida (opcional)</label><textarea id="customWelcome" placeholder="Escribe una frase para la sección…"></textarea></div>
+   <div class="span-12 footer-actions"><button class="btn" type="submit">Guardar personalización</button><button class="btn secondary" type="button" id="resetCustom">Restablecer diseño original</button></div>
+  </form>
+ </div>
+ <div class="panel">
+  <h2>Qué puedes editar</h2>
+  <p class="muted">Desde aquí puedes personalizar los textos principales, los colores, el logotipo y la imagen de cabecera. También puedes editar los días, sus programaciones y las fichas de cada integrante desde sus pestañas correspondientes.</p>
+  <div class="notice">Las imágenes se reducen de tamaño automáticamente al subirlas.</div>
+ </div>
+</section>
+<section id="backup" class="view">
+ <div class="panel"><h2>Copia de seguridad</h2><p class="muted">Los datos se guardan automáticamente en la nube y todos los monitores ven lo mismo. Exporta una copia de vez en cuando como seguridad extra.</p>
+ <div class="footer-actions"><button class="btn" id="exportData">Exportar copia (.json)</button><label class="btn secondary" for="importFile" style="margin:0;cursor:pointer">Importar copia (.json)</label><input id="importFile" type="file" accept=".json,application/json" hidden></div>
+ <hr><h3>¿Qué incluye?</h3><p>Integrantes, teléfonos, alergias, observaciones, días, programación, asistencias, insignias y pañoletas.</p>
+ <div class="notice">Las copias contienen datos personales de menores: guárdalas solo en un lugar seguro.</div>
+ <hr><button class="btn danger" id="eraseAll">Borrar todos los datos</button>
+ </div>
+</section>
+</main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {getFirestore,doc,setDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-/* ====== PEGA AQUÍ TUS DATOS DE FIREBASE (paso 3 de la guía) ====== */
 const firebaseConfig={
   apiKey:"AIzaSyBx82GLSDJ9K2MdSszSll8BZyDfp6s4-9k",
   authDomain:"lista-de-scouts-la-nucia.firebaseapp.com",
@@ -103,134 +172,147 @@ const firebaseConfig={
   messagingSenderId:"276968590796",
   appId:"1:276968590796:web:e03b81d909781f90caa169"
 };
-/* Correo del usuario compartido que creas en Firebase (paso 4) */
 const MONITOR_EMAIL="monitores@scoutslanucia.com";
-/* ================================================================= */
-
-const KEY='scouts-asistencia-v1';
-let S={kids:[],att:{},extras:[]};
-let lastJson='';
-function status(t){const e=document.getElementById('st');if(e)e.textContent=t}
-const app=initializeApp(firebaseConfig),auth=getAuth(app),fdb=getFirestore(app),ref=doc(fdb,'asistencia','estado');
-function save(){
-  const j=JSON.stringify(S);lastJson=j;status('Guardando…');
-  setDoc(ref,{json:j}).then(()=>status('✓ Todo guardado'),()=>status('No se pudo guardar. Revisa la conexión.'));
+const fbApp=initializeApp(firebaseConfig),auth=getAuth(fbApp),fdb=getFirestore(fbApp);
+const refMain=doc(fdb,'asistencia','estado'),refSet=doc(fdb,'asistencia','ajustes');
+const $=id=>document.getElementById(id);
+const today=new Date(); const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const addDays=(date,n)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+function initialData(){let dates=[];let d=iso(today);for(let i=0;i<84;i++){let dt=addDays(d,i);if(new Date(dt+'T12:00:00').getDay()===6)dates.push({id:uid(),date:dt,name:'Reunión de sábado',status:'actividad',description:''})}return {members:[],dates,attendance:{},settings:{}}}
+function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
+let data=initialData(), currentDate='';if(!data.settings)data.settings={};
+let synced=false,lastMain='',lastSet='';
+function setStatus(t){const e=document.getElementById('saveStatus');if(e)e.textContent=t}
+function put(ref,json){setStatus('Guardando…');setDoc(ref,{json}).then(()=>setStatus('✓ Todo guardado'),()=>setStatus('⚠ No se pudo guardar. Revisa la conexión.'))}
+function persist(){
+  if(!synced)return;
+  const {settings,...main}=data;
+  const m=JSON.stringify(main),st=JSON.stringify(settings||{});
+  if(m!==lastMain){lastMain=m;put(refMain,m)}
+  if(st!==lastSet){lastSet=st;put(refSet,st)}
 }
-
-const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const longDate=s=>parse(s).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-function lastSaturday(){const d=new Date();d.setHours(0,0,0,0);while(d.getDay()!==6)d.setDate(d.getDate()-1);return d}
-function sessions(){
-  const set=new Set(S.extras);Object.keys(S.att).forEach(k=>set.add(k));
-  const ls=lastSaturday();
-  for(let w=-9;w<=2;w++){const d=new Date(ls);d.setDate(d.getDate()+7*w);set.add(iso(d))}
-  return [...set].sort();
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(s){if(!s)return 'Sin fecha';return new Date(s+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+function attendanceFor(date){if(!data.attendance[date])data.attendance[date]={};return data.attendance[date]}
+function statusOf(date,member){return attendanceFor(date)[member]||'pendiente'}
+function dateOptions(){let sel=$('attendanceDate');let previous=currentDate||sel.value;let sorted=[...data.dates].sort((a,b)=>a.date.localeCompare(b.date));sel.innerHTML=sorted.length?sorted.map(d=>`<option value="${d.date}" ${d.date===previous?'selected':''}>${esc(fmt(d.date))}${d.status==='sin actividad'?' · Sin actividad':''}</option>`).join(''):'<option value="">Añade un día en “Días y programación”</option>';currentDate=sel.value||''}
+function renderAttendance(){dateOptions();let date=currentDate;let session=data.dates.find(d=>d.date===date);$('datePill').textContent=fmt(date);$('sessionInfo').innerHTML=session?`<div class="notice" style="${session.status==='sin actividad'?'background:#fff0f0;border-color:#efc2c2;color:#8b3333':''}"><strong>${esc(session.name|| (session.status==='actividad'?'Actividad scout':'Sin actividad'))}</strong>${session.description?`<div style="margin-top:6px;white-space:pre-wrap">${esc(session.description)}</div>`:''}${session.status==='sin actividad'?'<div style="margin-top:5px">Este día está marcado como sin actividad. Puedes mantenerlo en el calendario sin pasar lista.</div>':''}</div>`:'<p class="muted">No hay ningún día configurado. Añade uno en “Días y programación”.</p>';
+let list=data.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));let counts={presente:0,ausente:0,justificado:0,pendiente:0};list.forEach(m=>counts[statusOf(date,m)]++);$('countPresent').textContent=counts.presente;$('countAbsent').textContent=counts.ausente;$('countExcused').textContent=counts.justificado;$('countPending').textContent=counts.pendiente;
+$('attendanceTable').innerHTML=!date?'<div class="empty">Añade un día para empezar.</div>':!list.length?'<div class="empty">Todavía no hay integrantes. Añádelos en la pestaña “Integrantes”.</div>':`<table><thead><tr><th>Integrante</th><th>Asistencia</th></tr></thead><tbody>${list.map(m=>`<tr><td class="namecell">${esc(m.name)}${m.nickname?`<div class="muted small">${esc(m.nickname)}</div>`:''}</td><td><div class="statusset">${[['presente','✓ Presente'],['ausente','— Ausente'],['justificado','✓ Justificado'],['pendiente','Sin marcar']].map(([v,t])=>`<button class="status ${statusOf(date,m.id)===v?'selected':''}" data-status="${v}" data-member="${m.id}">${t}</button>`).join('')}</div></td></tr>`).join('')}</tbody></table>`;
 }
-let tab='lista',sel=iso(lastSaturday()),armed=null,msg='';
+function renderDates(){let sorted=[...data.dates].sort((a,b)=>a.date.localeCompare(b.date));$('dateList').innerHTML=sorted.length?`<div class="att-table"><table><thead><tr><th>Fecha</th><th>Actividad</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${sorted.map(d=>`<tr><td>${esc(fmt(d.date))}</td><td><strong>${esc(d.name||'Sin título')}</strong>${d.description?`<div class="muted small">${esc(d.description.slice(0,100))}${d.description.length>100?'…':''}</div>`:''}</td><td><span class="badge">${d.status==='actividad'?'Hay actividad':'No hay actividad'}</span></td><td><div class="statusset"><button class="btn secondary smallbtn" data-edit-date="${d.id}">Editar</button><button class="btn danger smallbtn" data-delete-date="${d.id}">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No hay días todavía. Puedes añadir reuniones de sábado u otras fechas.</div>'}
+function renderMembers(){let list=data.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));$('memberCount').textContent=`${list.length} ${list.length===1?'integrante':'integrantes'}`;$('memberList').innerHTML=list.length?list.map(m=>`<article class="member-card"><div class="member-card-top"><div><h3>${esc(m.name)}</h3>${m.nickname?`<span class="badge">${esc(m.nickname)}</span>`:''}</div><span>🦫</span></div>${m.phone?`<p><strong>Familia:</strong> ${esc(m.phone)}</p>`:''}${m.emergency?`<p><strong>Contacto alternativo:</strong> ${esc(m.emergency)}</p>`:''}${m.allergies?`<p><strong>Alergias / información importante:</strong><br>${esc(m.allergies)}</p>`:''}${m.notes?`<p><strong>Observaciones:</strong><br>${esc(m.notes)}</p>`:''}<div class="footer-actions"><button class="btn secondary smallbtn" data-edit-member="${m.id}">Editar</button><button class="btn danger smallbtn" data-delete-member="${m.id}">Eliminar</button></div></article>`).join(''):'<div class="empty" style="grid-column:1/-1">Todavía no hay integrantes. Usa el formulario de abajo para añadir al primero.</div>'}
 
-function counts(date){
-  const a=S.att[date]||{};let y=0,n=0;
-  S.kids.forEach(k=>{if(a[k.id]===true)y++;else if(a[k.id]===false)n++});
-  return {y,n,u:S.kids.length-y-n};
+const BADGE_TYPES=[
+ {id:'integracion',name:'Castor Sin Paletas',level:'1.ª · Integración',emoji:'🌱'},
+ {id:'participacion',name:'Castor Con Paletas',level:'2.ª · Participación',emoji:'🪵'},
+ {id:'animacion',name:'Castor Keeo / Castor plateado',level:'3.ª · Animación',emoji:'⭐'}
+];
+function ensureProgress(m){if(!m.progress)m.progress={};if(!m.progress.badges)m.progress.badges={};if(!m.progress.neckerchief)m.progress.neckerchief={received:false,date:'',place:'',notes:''};BADGE_TYPES.forEach(b=>{if(!m.progress.badges[b.id])m.progress.badges[b.id]={received:false,date:'',place:'',notes:''}});return m.progress}
+function renderAwards(){
+ const sel=$('awardMemberSelect'),old=sel.value;
+ sel.innerHTML=data.members.length?'<option value="">Selecciona un integrante…</option>'+data.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'es')).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join(''):'<option value="">Primero añade integrantes</option>';
+ if(data.members.some(m=>m.id===old))sel.value=old;else if(data.members.length===1)sel.value=data.members[0].id;
+ const m=data.members.find(x=>x.id===sel.value);
+ if(!m){$('awardEditor').innerHTML='<div class="empty">'+(data.members.length?'Selecciona un integrante para editar sus insignias y pañoleta.':'Añade integrantes en la pestaña «Integrantes» y selecciónalos aquí.')+'</div>';renderAwardSummary();return}
+ const pr=ensureProgress(m);
+ $('awardEditor').innerHTML=`<h3>Insignias de ${esc(m.name)}</h3><div class="grid">${BADGE_TYPES.map(b=>{let x=pr.badges[b.id];return `<div class="span-12" style="border:1px solid var(--line);border-radius:14px;padding:15px"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><h3>${b.emoji} ${esc(b.name)}</h3><label style="display:flex;align-items:center;gap:8px;margin:0"><input type="checkbox" data-badge-received="${b.id}" ${x.received?'checked':''} style="width:auto"> Conseguida</label></div><p class="muted small">${esc(b.level)}</p><div class="grid"><div class="span-4"><label>Fecha de consecución</label><input type="date" data-badge-date="${b.id}" value="${esc(x.date||'')}" ${x.received?'':'disabled'}></div><div class="span-4"><label>Dónde la consiguió / recibió</label><input data-badge-place="${b.id}" value="${esc(x.place||'')}" placeholder="Ej. Acampada, cubil…" ${x.received?'':'disabled'}></div><div class="span-4"><label>Notas (opcional)</label><input data-badge-notes="${b.id}" value="${esc(x.notes||'')}" placeholder="Observaciones" ${x.received?'':'disabled'}></div></div></div>`}).join('')}
+ <div class="span-12" style="border:1px solid var(--line);border-radius:14px;padding:15px"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><h3>🧣 Pañoleta del grupo</h3><label style="display:flex;align-items:center;gap:8px;margin:0"><input id="neckerchiefReceived" type="checkbox" ${pr.neckerchief.received?'checked':''} style="width:auto"> Pañoleta entregada</label></div><div class="grid" style="margin-top:12px"><div class="span-4"><label>Fecha de entrega</label><input id="neckerchiefDate" type="date" value="${esc(pr.neckerchief.date||'')}" ${pr.neckerchief.received?'':'disabled'}></div><div class="span-4"><label>Dónde se entregó</label><input id="neckerchiefPlace" value="${esc(pr.neckerchief.place||'')}" placeholder="Ej. Ceremonia, acampada…" ${pr.neckerchief.received?'':'disabled'}></div><div class="span-4"><label>Notas (opcional)</label><input id="neckerchiefNotes" value="${esc(pr.neckerchief.notes||'')}" placeholder="Observaciones" ${pr.neckerchief.received?'':'disabled'}></div></div></div>
+ <div class="span-12 footer-actions"><button class="btn" id="saveAwardProgress">Guardar cambios</button></div></div>`;
+ BADGE_TYPES.forEach(b=>{const c=$(`[data-badge-received="${b.id}"]`);c.addEventListener('change',()=>{document.querySelectorAll(`[data-badge-date="${b.id}"],[data-badge-place="${b.id}"],[data-badge-notes="${b.id}"]`).forEach(el=>el.disabled=!c.checked)})});
+ $('neckerchiefReceived').addEventListener('change',e=>['neckerchiefDate','neckerchiefPlace','neckerchiefNotes'].forEach(id=>$(id).disabled=!e.target.checked));
+ $('saveAwardProgress').addEventListener('click',()=>{const member=data.members.find(x=>x.id===sel.value);if(!member)return;const p=ensureProgress(member);BADGE_TYPES.forEach(b=>{p.badges[b.id]={received:$(`[data-badge-received="${b.id}"]`).checked,date:$(`[data-badge-date="${b.id}"]`).value,place:$(`[data-badge-place="${b.id}"]`).value.trim(),notes:$(`[data-badge-notes="${b.id}"]`).value.trim()};});p.neckerchief={received:$('neckerchiefReceived').checked,date:$('neckerchiefDate').value,place:$('neckerchiefPlace').value.trim(),notes:$('neckerchiefNotes').value.trim()};persist();renderAwardSummary();alert('Insignias y pañoleta guardadas.')});
+ renderAwardSummary();
 }
+function renderAwardSummary(){const list=data.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));$('awardSummary').innerHTML=list.length?`<div class="att-table"><table><thead><tr><th>Integrante</th><th>Insignias conseguidas</th><th>Pañoleta</th></tr></thead><tbody>${list.map(m=>{const p=ensureProgress(m);const got=BADGE_TYPES.filter(b=>p.badges[b.id]?.received);return `<tr><td><strong>${esc(m.name)}</strong></td><td>${got.length?got.map(b=>`<div style="margin:4px 0">${b.emoji} ${esc(b.name)}${p.badges[b.id].date?` · ${esc(fmt(p.badges[b.id].date))}`:''}${p.badges[b.id].place?` · ${esc(p.badges[b.id].place)}`:''}</div>`).join(''):'<span class="muted">Ninguna registrada</span>'}</td><td>${p.neckerchief.received?`🧣 Entregada${p.neckerchief.date?` · ${esc(fmt(p.neckerchief.date))}`:''}${p.neckerchief.place?` · ${esc(p.neckerchief.place)}`:''}`:'<span class="muted">Pendiente</span>'}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Todavía no hay integrantes.</div>'}
 
-function viewLista(){
-  const list=sessions();
-  if(!list.includes(sel))sel=list[list.length-1];
-  const isExtra=S.extras.includes(sel);
-  const c=counts(sel),tot=S.kids.length||1;
-  let h='<div class="chips" role="group" aria-label="Fechas">';
-  list.forEach(d=>{const dt=parse(d);
-    h+=`<button class="chip" data-act="sel" data-d="${d}" aria-pressed="${d===sel}">${S.extras.includes(d)?'<i>Extra</i>':''}<span>${dt.toLocaleDateString('es-ES',{weekday:'short'})}</span><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('es-ES',{month:'short'})}</span></button>`});
-  h+='</div>';
-  h+=`<section class="panel"><div class="sum"><div><h2>${longDate(sel)}</h2><div class="legend">${isExtra?'Día excepcional':'Reunión de sábado'}</div></div><div class="count">${c.y}<small> / ${S.kids.length} presentes</small></div></div>
-  <div class="bar" aria-hidden="true"><div class="y" style="width:${c.y/tot*100}%"></div><div class="n" style="width:${c.n/tot*100}%"></div></div>
-  <div class="legend"><span>Están: ${c.y}</span><span>No están: ${c.n}</span><span>Sin marcar: ${c.u}</span></div>`;
-  if(S.kids.length){
-    h+='<div style="margin-top:8px">';
-    const a=S.att[sel]||{};
-    S.kids.forEach(k=>{h+=`<div class="row"><div class="name">${esc(k.name)}</div><div class="tog"><button class="y" data-act="mark" data-k="${k.id}" data-v="1" aria-pressed="${a[k.id]===true}">Está</button><button class="n" data-act="mark" data-k="${k.id}" data-v="0" aria-pressed="${a[k.id]===false}">No está</button></div></div>`});
-    h+='</div><div class="actions"><button class="btn ghost" data-act="all">Marcar todos como presentes</button><button class="btn ghost" data-act="clear">Borrar marcas</button></div>';
-  } else h+='<div class="empty">Todavía no hay niños en la lista.<br>Añádelos en la pestaña «Niños».</div>';
-  h+='</section>';
-  h+=`<section class="panel"><label for="xd">Añadir un día excepcional (campamento, salida, reunión extra…)</label><div class="add"><input type="date" id="xd" value="${sel}"><button class="btn" data-act="addday">Añadir día</button></div>`;
-  if(msg)h+=`<p class="hint">${msg}</p>`;
-  if(isExtra)h+=`<div class="actions"><button class="btn danger" data-act="delday">${armed==='day'?'¿Seguro? Pulsa otra vez para quitar':'Quitar este día excepcional'}</button></div>`;
-  h+='</section>';
-  return h;
+function defaultSettings(){return {title:'Colonia Castores',subtitle:'Control de asistencia · Grupo Scout La Nucía',primary:'#1d6b50',header:'#174e3c',background:'#f5f8f5',text:'#20312b',logoEmoji:'🦫',logoImage:'',bannerImage:'',welcome:''}}
+function getSettings(){return {...defaultSettings(),...(data.settings||{})}}
+function applySettings(){
+ const s=getSettings(),root=document.documentElement;
+ root.style.setProperty('--green',s.primary);root.style.setProperty('--green2',tint(s.primary));root.style.setProperty('--paper',s.background);root.style.setProperty('--ink',s.text);
+ document.querySelector('header').style.backgroundImage=s.bannerImage?`linear-gradient(120deg, ${s.header}dd, ${s.primary}cc), url("${s.bannerImage}")`:`linear-gradient(120deg, ${s.header}, ${s.primary})`;
+ $('brandTitle').textContent=s.title;$('brandSubtitle').textContent=s.subtitle;
+ $('brandLogo').innerHTML=s.logoImage?`<img src="${s.logoImage}" alt="Logotipo de la sección">`:esc(s.logoEmoji||'🦫');
+ $('welcomeBanner').textContent=s.welcome;$('welcomeBanner').style.display=s.welcome?'block':'none';
+ document.title=s.title+' · Control scout';
 }
-
-function viewNinos(){
-  const dates=Object.keys(S.att).filter(d=>Object.values(S.att[d]).some(v=>v!==undefined));
-  let h=`<section class="panel"><label for="nn">Nombre del niño o niña</label><div class="add"><input type="text" id="nn" maxlength="50" placeholder="Ej. Lucía Martínez" autocomplete="off"><button class="btn" data-act="addkid">Añadir</button></div></section><section class="panel">`;
-  if(!S.kids.length)h+='<div class="empty">La lista está vacía. Escribe un nombre arriba y pulsa «Añadir».</div>';
-  S.kids.forEach(k=>{
-    const pres=dates.filter(d=>S.att[d][k.id]===true).length;
-    h+=`<div class="row"><div class="name">${esc(k.name)}<small>${pres} de ${dates.length} reuniones con asistencia</small></div><button class="del" data-act="delkid" data-k="${k.id}">${armed===k.id?'¿Seguro?':'Eliminar'}</button></div>`});
-  h+='</section>';
-  return h;
+function tint(hex){try{let h=hex.replace('#','');let n=parseInt(h,16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.round(r+(255-r)*.88);g=Math.round(g+(255-g)*.88);b=Math.round(b+(255-b)*.88);return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(e){return '#e7f4ed'}}
+function fillCustomForm(){
+ const s=getSettings();$('customTitle').value=s.title;$('customSubtitle').value=s.subtitle;$('customPrimary').value=s.primary;$('customHeader').value=s.header;$('customBackground').value=s.background;$('customText').value=s.text;$('customLogoEmoji').value=s.logoEmoji;$('customWelcome').value=s.welcome;
+ $('logoPreview').innerHTML=s.logoImage?`<img src="${s.logoImage}" alt="Vista previa del logo">`:'<span class="muted small">No hay imagen de logo cargada.</span>';
+ $('bannerPreview').innerHTML=s.bannerImage?`<img src="${s.bannerImage}" alt="Vista previa de cabecera">`:'<span class="muted small">No hay imagen de cabecera cargada.</span>';
 }
+function readImage(file,max,type){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(!file.type.startsWith('image/')){reject(Error('El archivo no es una imagen'));return}const r=new FileReader();r.onerror=()=>reject(Error('No se pudo leer la imagen'));r.onload=()=>{const img=new Image();img.onerror=()=>reject(Error('No se pudo leer la imagen'));img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL(type,0.75))};img.src=r.result};r.readAsDataURL(file)})}
 
-function render(){
-  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
-  document.getElementById('app').innerHTML=tab==='lista'?viewLista():viewNinos();
-}
+function render(){renderAttendance();renderDates();renderMembers();renderAwards();applySettings();persist()}
+function resetDateForm(){ $('dateForm').reset();$('editDateId').value='';$('dateFormTitle').textContent='Crear día de actividad';$('dateStatus').value='actividad';$('dateInput').value=currentDate||''}
+function resetMemberForm(){$('memberForm').reset();$('editMemberId').value='';$('memberFormTitle').textContent='Añadir integrante'}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===b.dataset.view));if(b.dataset.view==='dates')renderDates();if(b.dataset.view==='members')renderMembers();if(b.dataset.view==='awards')renderAwards()}));
+$('attendanceDate').addEventListener('change',e=>{currentDate=e.target.value;renderAttendance()});
+$('attendanceTable').addEventListener('click',e=>{let b=e.target.closest('[data-status]');if(!b||!currentDate)return;attendanceFor(currentDate)[b.dataset.member]=b.dataset.status;renderAttendance();persist()});
+$('allPending').addEventListener('click',()=>{if(!currentDate)return;if(confirm('¿Quieres dejar sin marcar la asistencia de todo el grupo en este día?')){attendanceFor(currentDate);data.attendance[currentDate]={};renderAttendance();persist()}});
+$('saveAttendance').addEventListener('click',()=>{persist();alert('Asistencia guardada.')});
+$('printAttendance').addEventListener('click',()=>window.print());
+$('newDate').addEventListener('click',()=>{resetDateForm();$('dateEditor').scrollIntoView({behavior:'smooth'})});
+$('cancelDateEdit').addEventListener('click',resetDateForm);
+$('dateForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editDateId').value,dt=$('dateInput').value;if(!dt)return;let collision=data.dates.find(d=>d.date===dt&&d.id!==id);if(collision&&!confirm('Ya existe un día para esa fecha. ¿Quieres guardar otro de todos modos?'))return;let item={id:id||uid(),date:dt,name:$('dateName').value.trim(),status:$('dateStatus').value,description:$('dateDescription').value.trim()};if(id)data.dates=data.dates.map(d=>d.id===id?item:d);else data.dates.push(item);currentDate=dt;resetDateForm();render();document.querySelector('[data-view="attendance"]').click()});
+$('dateList').addEventListener('click',e=>{let edit=e.target.closest('[data-edit-date]'),del=e.target.closest('[data-delete-date]');if(edit){let d=data.dates.find(x=>x.id===edit.dataset.editDate);if(!d)return;$('editDateId').value=d.id;$('dateInput').value=d.date;$('dateName').value=d.name;$('dateStatus').value=d.status;$('dateDescription').value=d.description;$('dateFormTitle').textContent='Editar día de actividad';$('dateEditor').scrollIntoView({behavior:'smooth'})}if(del){let d=data.dates.find(x=>x.id===del.dataset.deleteDate);if(d&&confirm(`¿Eliminar el día ${fmt(d.date)}? También se borrará su asistencia.`)){data.dates=data.dates.filter(x=>x.id!==d.id);delete data.attendance[d.date];if(currentDate===d.date)currentDate='';render()}}});
+$('clearMemberForm').addEventListener('click',resetMemberForm);
+$('memberForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editMemberId').value;let old=id?data.members.find(x=>x.id===id):null;let m={...(old||{}),id:id||uid(),name:$('memberName').value.trim(),nickname:$('memberNickname').value.trim(),phone:$('memberPhone').value.trim(),emergency:$('memberEmergency').value.trim(),allergies:$('memberAllergies').value.trim(),notes:$('memberNotes').value.trim()};if(id)data.members=data.members.map(x=>x.id===id?m:x);else data.members.push(m);resetMemberForm();renderMembers();renderAttendance();renderAwards();persist()});
+$('awardMemberSelect').addEventListener('change',renderAwards);
+$('memberList').addEventListener('click',e=>{let edit=e.target.closest('[data-edit-member]'),del=e.target.closest('[data-delete-member]');if(edit){let m=data.members.find(x=>x.id===edit.dataset.editMember);if(!m)return;$('editMemberId').value=m.id;$('memberName').value=m.name;$('memberNickname').value=m.nickname;$('memberPhone').value=m.phone;$('memberEmergency').value=m.emergency;$('memberAllergies').value=m.allergies;$('memberNotes').value=m.notes;$('memberFormTitle').textContent='Editar integrante';$('memberEditor').scrollIntoView({behavior:'smooth'})}if(del){let m=data.members.find(x=>x.id===del.dataset.deleteMember);if(m&&confirm(`¿Eliminar a ${m.name}? También se eliminarán sus marcas de asistencia.`)){data.members=data.members.filter(x=>x.id!==m.id);Object.values(data.attendance).forEach(day=>delete day[m.id]);renderMembers();renderAttendance();renderAwards();persist()}}});
+$('exportData').addEventListener('click',()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`copia-castores-${iso(today)}.json`;a.click();URL.revokeObjectURL(url)});
+$('importFile').addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!Array.isArray(x.members)||!Array.isArray(x.dates)||typeof x.attendance!=='object')throw Error();if(confirm('Importar esta copia sustituirá los datos actuales. ¿Continuar?')){data=x;if(!data.settings)data.settings={};currentDate='';render();fillCustomForm();resetMemberForm();resetDateForm();alert('Copia importada correctamente.')}}catch(err){alert('No se ha podido importar: el archivo no parece una copia válida de esta web.')}e.target.value=''});
+$('eraseAll').addEventListener('click',()=>{if(confirm('¿Seguro que quieres borrar TODOS los integrantes, fechas y asistencias? Esta acción no se puede deshacer.')){data={members:[],dates:[],attendance:{},settings:{}};currentDate='';render();resetDateForm();resetMemberForm()}});
+render();resetDateForm();resetMemberForm();fillCustomForm();
 
-document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-act],[data-tab]');if(!t)return;
-  if(t.dataset.tab){tab=t.dataset.tab;armed=null;msg='';render();return}
-  const act=t.dataset.act;
-  if(act!=='delkid'&&act!=='delday')armed=null;
-  if(act==='sel'){sel=t.dataset.d;msg=''}
-  else if(act==='mark'){const a=S.att[sel]=S.att[sel]||{};const v=t.dataset.v==='1';a[t.dataset.k]=a[t.dataset.k]===v?undefined:v;if(a[t.dataset.k]===undefined)delete a[t.dataset.k];save()}
-  else if(act==='all'){const a=S.att[sel]=S.att[sel]||{};S.kids.forEach(k=>a[k.id]=true);save()}
-  else if(act==='clear'){delete S.att[sel];save()}
-  else if(act==='addday'){const v=document.getElementById('xd').value;
-    if(!v)msg='Elige una fecha.';
-    else if(sessions().includes(v)){sel=v;msg=parse(v).getDay()===6?'Ese sábado ya está en la lista.':'Ese día ya está añadido.'}
-    else{S.extras.push(v);sel=v;msg='Día añadido.';save()}}
-  else if(act==='delday'){if(armed==='day'){S.extras=S.extras.filter(d=>d!==sel);delete S.att[sel];armed=null;msg='';save()}else armed='day'}
-  else if(act==='addkid'){const i=document.getElementById('nn'),n=i.value.trim();
-    if(n){S.kids.push({id:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n});save()}}
-  else if(act==='delkid'){const id=t.dataset.k;
-    if(armed===id){S.kids=S.kids.filter(k=>k.id!==id);Object.values(S.att).forEach(a=>delete a[id]);armed=null;save()}else armed=id}
-  render();
-  if(act==='addkid'){const i=document.getElementById('nn');if(i)i.focus()}
+$('customForm').addEventListener('submit',async e=>{
+ e.preventDefault();const s=getSettings();
+ try{
+  s.title=$('customTitle').value.trim()||'Colonia Castores';s.subtitle=$('customSubtitle').value.trim();
+  s.primary=$('customPrimary').value;s.header=$('customHeader').value;s.background=$('customBackground').value;s.text=$('customText').value;
+  s.logoEmoji=$('customLogoEmoji').value.trim()||'🦫';s.welcome=$('customWelcome').value.trim();
+  const logoFile=$('customLogoFile').files[0],bannerFile=$('customBannerFile').files[0];
+  if(logoFile)s.logoImage=await readImage(logoFile,256,'image/png');if(bannerFile)s.bannerImage=await readImage(bannerFile,1000,'image/jpeg');
+  data.settings=s;persist();applySettings();fillCustomForm();$('customLogoFile').value='';$('customBannerFile').value='';
+  alert('Personalización guardada.');
+ }catch(err){alert(err.message||'No se ha podido guardar la imagen.')}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nn')document.querySelector('[data-act="addkid"]').click()});
-render();
-const loginEl=document.getElementById('login'),wrapEl=document.querySelector('.wrap'),errEl=document.getElementById('err');
-let unsub=null;
-function enter(){
-  const pw=document.getElementById('pw');errEl.textContent='';
-  signInWithEmailAndPassword(auth,MONITOR_EMAIL,pw.value).catch(()=>{errEl.textContent='Código incorrecto. Inténtalo de nuevo.'});
-}
-document.getElementById('go').addEventListener('click',enter);
-document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});
-document.getElementById('out').addEventListener('click',()=>signOut(auth));
+$('removeLogo').addEventListener('click',()=>{let s=getSettings();s.logoImage='';data.settings=s;persist();applySettings();fillCustomForm()});
+$('removeBanner').addEventListener('click',()=>{let s=getSettings();s.bannerImage='';data.settings=s;persist();applySettings();fillCustomForm()});
+$('resetCustom').addEventListener('click',()=>{if(confirm('¿Restablecer colores, textos e imágenes al diseño original?')){data.settings=defaultSettings();persist();applySettings();fillCustomForm()}});
+document.querySelector('[data-view="customize"]').addEventListener('click',fillCustomForm);
+
+const loginGate=$('loginGate'),loginErr=$('loginError');
+function showLogin(){loginGate.classList.remove('hidden');$('loginPassword').focus()}
+function hideLogin(){loginGate.classList.add('hidden')}
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();loginErr.textContent='';$('loginSubmit').disabled=true;
+  try{await signInWithEmailAndPassword(auth,MONITOR_EMAIL,$('loginPassword').value);$('loginPassword').value=''}
+  catch(err){loginErr.textContent=err&&err.code==='auth/network-request-failed'?'Sin conexión. Inténtalo de nuevo.':'Código incorrecto. Inténtalo de nuevo.'}
+  $('loginSubmit').disabled=false;
+});
+$('logoutButton').addEventListener('click',()=>signOut(auth));
+let unsubs=[],gotMain=false,gotSet=false;
+function ready(){if(gotMain&&gotSet&&!synced){synced=true;render();persist()}}
+function typingInAwards(){const a=document.activeElement;return !!(a&&a.closest&&a.closest('#awardEditor'))}
 onAuthStateChanged(auth,user=>{
-  if(user){
-    loginEl.hidden=true;wrapEl.hidden=false;status('Conectando…');
-    unsub=onSnapshot(ref,snap=>{
-      if(snap.metadata.hasPendingWrites)return;
-      if(snap.exists()){
-        const j=snap.data().json;
-        if(j&&j!==lastJson){
-          try{S=Object.assign({kids:[],att:{},extras:[]},JSON.parse(j));lastJson=j}catch(e){return}
-          const a=document.activeElement;
-          if(!(a&&a.tagName==='INPUT'&&a.value))render();
-        }
-      }
-      status('✓ Todo guardado');
-    },()=>status('Sin acceso a la base de datos'));
-  }else{
-    if(unsub){unsub();unsub=null}
-    wrapEl.hidden=true;loginEl.hidden=false;
-  }
+  unsubs.forEach(u=>u());unsubs=[];synced=false;gotMain=false;gotSet=false;lastMain='';lastSet='';
+  if(!user){data=initialData();currentDate='';render();showLogin();return}
+  hideLogin();setStatus('Conectando…');
+  unsubs.push(onSnapshot(refMain,snap=>{
+    if(snap.metadata.hasPendingWrites)return;
+    if(snap.exists()){const j=snap.data().json;if(j&&j!==lastMain){try{const p=JSON.parse(j);data={...p,settings:data.settings||{}};if(!data.attendance)data.attendance={};lastMain=j;if(synced&&!typingInAwards())render()}catch(e){}}}
+    gotMain=true;ready();if(synced)setStatus('✓ Todo guardado');
+  },()=>setStatus('⚠ Sin acceso a la base de datos')));
+  unsubs.push(onSnapshot(refSet,snap=>{
+    if(snap.metadata.hasPendingWrites)return;
+    if(snap.exists()){const j=snap.data().json;if(j&&j!==lastSet){try{data.settings=JSON.parse(j);lastSet=j;if(synced){applySettings();fillCustomForm()}}catch(e){}}}
+    gotSet=true;ready();
+  },()=>setStatus('⚠ Sin acceso a la base de datos')));
 });
+showLogin();
 </script>
 </body>
 </html>
