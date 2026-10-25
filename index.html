@@ -55,14 +55,13 @@ input[type=color]{height:46px;padding:5px;cursor:pointer}
  </form>
 </div>
 <header>
- <div class="brand"><div class="logo" id="brandLogo">🦫</div><div><h1 id="brandTitle">Colonia Castores</h1><p id="brandSubtitle">Control de asistencia · Grupo Scout La Nucía</p><p id="saveStatus" class="small" style="margin-top:4px;opacity:.85" aria-live="polite"></p></div></div><div id="welcomeBanner" class="welcome-banner" style="display:none"></div>
+ <div class="brand"><div class="logo" id="brandLogo">🦫</div><div><h1 id="brandTitle">Colonia Castores</h1><p id="brandSubtitle">Control de asistencia · Grupo Scout La Nucía</p></div></div><div id="welcomeBanner" class="welcome-banner" style="display:none"></div><div id="saveStatus" class="small" role="status" style="margin-top:9px;color:#d9f0e4">Cambios guardados automáticamente</div>
  <nav class="no-print">
   <button class="tab active" data-view="attendance">📋 Pasar lista</button>
   <button class="tab" data-view="dates">🗓️ Días y programación</button>
   <button class="tab" data-view="members">🌿 Integrantes</button>
   <button class="tab" data-view="awards">🏅 Insignias y pañoleta</button>
   <button class="tab" data-view="customize">🎨 Personalizar</button>
-  <button class="tab" data-view="backup">💾 Copia de seguridad</button>
   <button class="tab logout-tab" id="logoutButton">↪ Cerrar sesión</button>
  </nav>
 </header>
@@ -139,7 +138,7 @@ input[type=color]{height:46px;padding:5px;cursor:pointer}
    <div class="span-4"><label for="customBackground">Fondo de página</label><input id="customBackground" type="color" value="#f5f8f5"></div>
    <div class="span-6"><label for="customText">Color del texto</label><input id="customText" type="color" value="#20312b"></div>
    <div class="span-6"><label for="customLogoEmoji">Icono / emoji (si no subes imagen)</label><input id="customLogoEmoji" maxlength="8" placeholder="🦫"></div>
-   <div class="span-6"><label for="customLogoFile">Imagen para el logotipo</label><input id="customLogoFile" type="file" accept="image/*"><p class="muted small">Mejor una imagen cuadrada. Se guarda en la nube.</p><div id="logoPreview" class="custom-preview"></div><button type="button" class="btn ghost smallbtn" id="removeLogo">Quitar imagen del logo</button></div>
+   <div class="span-6"><label for="customLogoFile">Imagen para el logotipo</label><input id="customLogoFile" type="file" accept="image/*"><p class="muted small">Mejor una imagen cuadrada. Se reduce de tamaño y se guarda en la nube.</p><div id="logoPreview" class="custom-preview"></div><button type="button" class="btn ghost smallbtn" id="removeLogo">Quitar imagen del logo</button></div>
    <div class="span-6"><label for="customBannerFile">Imagen de fondo de la cabecera (opcional)</label><input id="customBannerFile" type="file" accept="image/*"><p class="muted small">La imagen se mostrará detrás del título con una capa de color.</p><div id="bannerPreview" class="custom-preview banner-preview"></div><button type="button" class="btn ghost smallbtn" id="removeBanner">Quitar imagen de cabecera</button></div>
    <div class="span-12"><label for="customWelcome">Texto de bienvenida (opcional)</label><textarea id="customWelcome" placeholder="Escribe una frase para la sección…"></textarea></div>
    <div class="span-12 footer-actions"><button class="btn" type="submit">Guardar personalización</button><button class="btn secondary" type="button" id="resetCustom">Restablecer diseño original</button></div>
@@ -148,15 +147,7 @@ input[type=color]{height:46px;padding:5px;cursor:pointer}
  <div class="panel">
   <h2>Qué puedes editar</h2>
   <p class="muted">Desde aquí puedes personalizar los textos principales, los colores, el logotipo y la imagen de cabecera. También puedes editar los días, sus programaciones y las fichas de cada integrante desde sus pestañas correspondientes.</p>
-  <div class="notice">Las imágenes se reducen de tamaño automáticamente al subirlas.</div>
- </div>
-</section>
-<section id="backup" class="view">
- <div class="panel"><h2>Copia de seguridad</h2><p class="muted">Los datos se guardan automáticamente en la nube y todos los monitores ven lo mismo. Exporta una copia de vez en cuando como seguridad extra.</p>
- <div class="footer-actions"><button class="btn" id="exportData">Exportar copia (.json)</button><label class="btn secondary" for="importFile" style="margin:0;cursor:pointer">Importar copia (.json)</label><input id="importFile" type="file" accept=".json,application/json" hidden></div>
- <hr><h3>¿Qué incluye?</h3><p>Integrantes, teléfonos, alergias, observaciones, días, programación, asistencias, insignias y pañoletas.</p>
- <div class="notice">Las copias contienen datos personales de menores: guárdalas solo en un lugar seguro.</div>
- <hr><button class="btn danger" id="eraseAll">Borrar todos los datos</button>
+  <div class="notice">Las imágenes se reducen de tamaño automáticamente antes de guardarse en la nube.</div>
  </div>
 </section>
 </main>
@@ -181,15 +172,17 @@ const addDays=(date,n)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate(
 function initialData(){let dates=[];let d=iso(today);for(let i=0;i<84;i++){let dt=addDays(d,i);if(new Date(dt+'T12:00:00').getDay()===6)dates.push({id:uid(),date:dt,name:'Reunión de sábado',status:'actividad',description:''})}return {members:[],dates,attendance:{},settings:{}}}
 function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
 let data=initialData(), currentDate='';if(!data.settings)data.settings={};
+function setSaveStatus(message, error=false){const el=$('saveStatus');if(el){el.textContent=message;el.style.color=error?'#ffe0df':'#d9f0e4'}}
 let synced=false,lastMain='',lastSet='';
-function setStatus(t){const e=document.getElementById('saveStatus');if(e)e.textContent=t}
-function put(ref,json){setStatus('Guardando…');setDoc(ref,{json}).then(()=>setStatus('✓ Todo guardado'),()=>setStatus('⚠ No se pudo guardar. Revisa la conexión.'))}
+function put(ref,json){setSaveStatus('Guardando…');setDoc(ref,{json}).then(()=>setSaveStatus('✓ Todo guardado'),()=>setSaveStatus('⚠ No se pudo guardar. Revisa la conexión.',true))}
 function persist(){
-  if(!synced)return;
+  if(!synced)return true;
   const {settings,...main}=data;
   const m=JSON.stringify(main),st=JSON.stringify(settings||{});
+  if(st.length>900000){setSaveStatus('⚠ Las imágenes ocupan demasiado. Usa imágenes más pequeñas.',true);return false}
   if(m!==lastMain){lastMain=m;put(refMain,m)}
   if(st!==lastSet){lastSet=st;put(refSet,st)}
+  return true;
 }
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(s){if(!s)return 'Sin fecha';return new Date(s+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
@@ -243,7 +236,7 @@ function fillCustomForm(){
  $('logoPreview').innerHTML=s.logoImage?`<img src="${s.logoImage}" alt="Vista previa del logo">`:'<span class="muted small">No hay imagen de logo cargada.</span>';
  $('bannerPreview').innerHTML=s.bannerImage?`<img src="${s.bannerImage}" alt="Vista previa de cabecera">`:'<span class="muted small">No hay imagen de cabecera cargada.</span>';
 }
-function readImage(file,max,type){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(!file.type.startsWith('image/')){reject(Error('El archivo no es una imagen'));return}const r=new FileReader();r.onerror=()=>reject(Error('No se pudo leer la imagen'));r.onload=()=>{const img=new Image();img.onerror=()=>reject(Error('No se pudo leer la imagen'));img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL(type,0.75))};img.src=r.result};r.readAsDataURL(file)})}
+function readImage(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return}if(!file.type.startsWith('image/')){reject(Error('El archivo no es una imagen'));return}if(file.size>8*1024*1024){reject(Error('La imagen supera los 8 MB. Elige una imagen más pequeña.'));return}const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{try{const max=900,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',0.72))}catch(e){reject(Error('No se pudo optimizar la imagen'))}};img.onerror=()=>reject(Error('No se pudo abrir la imagen'));img.src=r.result};r.onerror=()=>reject(Error('No se pudo leer la imagen'));r.readAsDataURL(file)})}
 
 function render(){renderAttendance();renderDates();renderMembers();renderAwards();applySettings();persist()}
 function resetDateForm(){ $('dateForm').reset();$('editDateId').value='';$('dateFormTitle').textContent='Crear día de actividad';$('dateStatus').value='actividad';$('dateInput').value=currentDate||''}
@@ -257,14 +250,11 @@ $('printAttendance').addEventListener('click',()=>window.print());
 $('newDate').addEventListener('click',()=>{resetDateForm();$('dateEditor').scrollIntoView({behavior:'smooth'})});
 $('cancelDateEdit').addEventListener('click',resetDateForm);
 $('dateForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editDateId').value,dt=$('dateInput').value;if(!dt)return;let collision=data.dates.find(d=>d.date===dt&&d.id!==id);if(collision&&!confirm('Ya existe un día para esa fecha. ¿Quieres guardar otro de todos modos?'))return;let item={id:id||uid(),date:dt,name:$('dateName').value.trim(),status:$('dateStatus').value,description:$('dateDescription').value.trim()};if(id)data.dates=data.dates.map(d=>d.id===id?item:d);else data.dates.push(item);currentDate=dt;resetDateForm();render();document.querySelector('[data-view="attendance"]').click()});
-$('dateList').addEventListener('click',e=>{let edit=e.target.closest('[data-edit-date]'),del=e.target.closest('[data-delete-date]');if(edit){let d=data.dates.find(x=>x.id===edit.dataset.editDate);if(!d)return;$('editDateId').value=d.id;$('dateInput').value=d.date;$('dateName').value=d.name;$('dateStatus').value=d.status;$('dateDescription').value=d.description;$('dateFormTitle').textContent='Editar día de actividad';$('dateEditor').scrollIntoView({behavior:'smooth'})}if(del){let d=data.dates.find(x=>x.id===del.dataset.deleteDate);if(d&&confirm(`¿Eliminar el día ${fmt(d.date)}? También se borrará su asistencia.`)){data.dates=data.dates.filter(x=>x.id!==d.id);delete data.attendance[d.date];if(currentDate===d.date)currentDate='';render()}}});
+$('dateList').addEventListener('click',e=>{let edit=e.target.closest('[data-edit-date]'),del=e.target.closest('[data-delete-date]');if(edit){let d=data.dates.find(x=>x.id===edit.dataset.editDate);if(!d)return;$('editDateId').value=d.id;$('dateInput').value=d.date;$('dateName').value=d.name;$('dateStatus').value=d.status;$('dateDescription').value=d.description;$('dateFormTitle').textContent='Editar día de actividad';$('dateEditor').scrollIntoView({behavior:'smooth'})}if(del){let d=data.dates.find(x=>x.id===del.dataset.deleteDate);if(d&&confirm(`¿Eliminar el día ${fmt(d.date)}? También se borrará su asistencia.`)){data.dates=data.dates.filter(x=>x.id!==d.id);delete data.attendance[d.date];if(currentDate===d.date)currentDate='';resetDateForm();render();persist()}}});
 $('clearMemberForm').addEventListener('click',resetMemberForm);
 $('memberForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editMemberId').value;let old=id?data.members.find(x=>x.id===id):null;let m={...(old||{}),id:id||uid(),name:$('memberName').value.trim(),nickname:$('memberNickname').value.trim(),phone:$('memberPhone').value.trim(),emergency:$('memberEmergency').value.trim(),allergies:$('memberAllergies').value.trim(),notes:$('memberNotes').value.trim()};if(id)data.members=data.members.map(x=>x.id===id?m:x);else data.members.push(m);resetMemberForm();renderMembers();renderAttendance();renderAwards();persist()});
 $('awardMemberSelect').addEventListener('change',renderAwards);
 $('memberList').addEventListener('click',e=>{let edit=e.target.closest('[data-edit-member]'),del=e.target.closest('[data-delete-member]');if(edit){let m=data.members.find(x=>x.id===edit.dataset.editMember);if(!m)return;$('editMemberId').value=m.id;$('memberName').value=m.name;$('memberNickname').value=m.nickname;$('memberPhone').value=m.phone;$('memberEmergency').value=m.emergency;$('memberAllergies').value=m.allergies;$('memberNotes').value=m.notes;$('memberFormTitle').textContent='Editar integrante';$('memberEditor').scrollIntoView({behavior:'smooth'})}if(del){let m=data.members.find(x=>x.id===del.dataset.deleteMember);if(m&&confirm(`¿Eliminar a ${m.name}? También se eliminarán sus marcas de asistencia.`)){data.members=data.members.filter(x=>x.id!==m.id);Object.values(data.attendance).forEach(day=>delete day[m.id]);renderMembers();renderAttendance();renderAwards();persist()}}});
-$('exportData').addEventListener('click',()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`copia-castores-${iso(today)}.json`;a.click();URL.revokeObjectURL(url)});
-$('importFile').addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!Array.isArray(x.members)||!Array.isArray(x.dates)||typeof x.attendance!=='object')throw Error();if(confirm('Importar esta copia sustituirá los datos actuales. ¿Continuar?')){data=x;if(!data.settings)data.settings={};currentDate='';render();fillCustomForm();resetMemberForm();resetDateForm();alert('Copia importada correctamente.')}}catch(err){alert('No se ha podido importar: el archivo no parece una copia válida de esta web.')}e.target.value=''});
-$('eraseAll').addEventListener('click',()=>{if(confirm('¿Seguro que quieres borrar TODOS los integrantes, fechas y asistencias? Esta acción no se puede deshacer.')){data={members:[],dates:[],attendance:{},settings:{}};currentDate='';render();resetDateForm();resetMemberForm()}});
 render();resetDateForm();resetMemberForm();fillCustomForm();
 
 $('customForm').addEventListener('submit',async e=>{
@@ -274,9 +264,9 @@ $('customForm').addEventListener('submit',async e=>{
   s.primary=$('customPrimary').value;s.header=$('customHeader').value;s.background=$('customBackground').value;s.text=$('customText').value;
   s.logoEmoji=$('customLogoEmoji').value.trim()||'🦫';s.welcome=$('customWelcome').value.trim();
   const logoFile=$('customLogoFile').files[0],bannerFile=$('customBannerFile').files[0];
-  if(logoFile)s.logoImage=await readImage(logoFile,256,'image/png');if(bannerFile)s.bannerImage=await readImage(bannerFile,1000,'image/jpeg');
-  data.settings=s;persist();applySettings();fillCustomForm();$('customLogoFile').value='';$('customBannerFile').value='';
-  alert('Personalización guardada.');
+  if(logoFile)s.logoImage=await readImage(logoFile);if(bannerFile)s.bannerImage=await readImage(bannerFile);
+  data.settings=s;const saved=persist();applySettings();fillCustomForm();$('customLogoFile').value='';$('customBannerFile').value='';
+  if(saved)alert('Personalización guardada.');else alert('Los cambios se han aplicado, pero no se han podido guardar. Prueba con imágenes más pequeñas.');
  }catch(err){alert(err.message||'No se ha podido guardar la imagen.')}
 });
 $('removeLogo').addEventListener('click',()=>{let s=getSettings();s.logoImage='';data.settings=s;persist();applySettings();fillCustomForm()});
@@ -300,17 +290,17 @@ function typingInAwards(){const a=document.activeElement;return !!(a&&a.closest&
 onAuthStateChanged(auth,user=>{
   unsubs.forEach(u=>u());unsubs=[];synced=false;gotMain=false;gotSet=false;lastMain='';lastSet='';
   if(!user){data=initialData();currentDate='';render();showLogin();return}
-  hideLogin();setStatus('Conectando…');
+  hideLogin();setSaveStatus('Conectando…');
   unsubs.push(onSnapshot(refMain,snap=>{
     if(snap.metadata.hasPendingWrites)return;
     if(snap.exists()){const j=snap.data().json;if(j&&j!==lastMain){try{const p=JSON.parse(j);data={...p,settings:data.settings||{}};if(!data.attendance)data.attendance={};lastMain=j;if(synced&&!typingInAwards())render()}catch(e){}}}
-    gotMain=true;ready();if(synced)setStatus('✓ Todo guardado');
-  },()=>setStatus('⚠ Sin acceso a la base de datos')));
+    gotMain=true;ready();if(synced)setSaveStatus('✓ Todo guardado');
+  },()=>setSaveStatus('⚠ Sin acceso a la base de datos',true)));
   unsubs.push(onSnapshot(refSet,snap=>{
     if(snap.metadata.hasPendingWrites)return;
     if(snap.exists()){const j=snap.data().json;if(j&&j!==lastSet){try{data.settings=JSON.parse(j);lastSet=j;if(synced){applySettings();fillCustomForm()}}catch(e){}}}
     gotSet=true;ready();
-  },()=>setStatus('⚠ Sin acceso a la base de datos')));
+  },()=>setSaveStatus('⚠ Sin acceso a la base de datos',true)));
 });
 showLogin();
 </script>
