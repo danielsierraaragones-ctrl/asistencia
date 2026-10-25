@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lista de asistencia · Scouts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3EF;--surface:#fff;--ink:#14261B;--muted:#5E7266;--line:#D8E2DB;--green:#1F5A38;--green-soft:#DDF0E3;--yes:#2E9A57;--no:#D8503F;--no-soft:#FBE4E0;--sun:#F2B705;--on-green:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A13;--surface:#16271C;--ink:#E7F1EA;--muted:#8FA597;--line:#26392D;--green:#58C282;--green-soft:#1C3A28;--yes:#4CC17B;--no:#EF7B6B;--no-soft:#3A201C;--on-green:#0E1A13;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1A13;--surface:#16271C;--ink:#E7F1EA;--muted:#8FA597;--line:#26392D;--green:#58C282;--green-soft:#1C3A28;--yes:#4CC17B;--no:#EF7B6B;--no-soft:#3A201C;--on-green:#0E1A13;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.4}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 90px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{width:44px;height:44px;border-radius:14px;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-size:24px}
+h1{font-size:1.45rem;font-weight:800;margin:0;letter-spacing:-.02em}
+header p{margin:0;color:var(--muted);font-size:.9rem}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:12px;font-weight:600;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--green);color:var(--on-green)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 6px;scrollbar-width:thin}
+.chip{flex:0 0 auto;min-width:64px;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:8px 10px;text-align:center;position:relative}
+.chip b{display:block;font-size:1.25rem;font-weight:800;line-height:1.1}
+.chip span{font-size:.75rem;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.chip[aria-pressed="true"] span{color:inherit;opacity:.85}
+.chip i{position:absolute;top:-5px;right:-3px;background:var(--sun);color:#3a2c00;font-style:normal;font-size:.62rem;font-weight:800;border-radius:8px;padding:1px 6px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:14px}
+.sum{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sum h2{margin:0;font-size:1.1rem;font-weight:800;text-transform:capitalize}
+.count{font-size:2rem;font-weight:800;color:var(--green);line-height:1}
+.count small{font-size:.9rem;color:var(--muted);font-weight:600}
+.bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;display:flex;margin:12px 0 4px}
+.bar div{transition:width .3s}
+.bar .y{background:var(--yes)}.bar .n{background:var(--no)}
+.legend{font-size:.82rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.name{flex:1;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.tog{display:flex;gap:6px}
+.tog button{border:1.5px solid var(--line);background:none;border-radius:12px;padding:9px 13px;font-weight:600;min-width:62px}
+.tog .y[aria-pressed="true"]{background:var(--yes);border-color:var(--yes);color:#fff}
+.tog .n[aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
+.btn{border:0;background:var(--green);color:var(--on-green);padding:11px 16px;border-radius:14px;font-weight:600}
+.btn.ghost{background:var(--green-soft);color:var(--green)}
+.btn.danger{background:var(--no-soft);color:var(--no)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.add{display:flex;gap:8px}
+input[type=text],input[type=date]{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:11px 14px}
+label{font-size:.85rem;color:var(--muted);display:block;margin-bottom:6px}
+.empty{text-align:center;color:var(--muted);padding:22px 8px}
+.del{border:0;background:var(--no-soft);color:var(--no);border-radius:12px;padding:8px 12px;font-weight:600}
+.hint{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+#login{max-width:380px;margin:12vh auto 0;padding:0 16px}
+#login .panel{padding:24px}
+#login h1{margin-bottom:6px}
+.err{color:var(--no);font-size:.85rem;min-height:1.2em;margin:8px 0 0}
+</style>
+</head>
+<body>
+<div id="login" hidden>
+  <div class="panel">
+    <div class="logo" aria-hidden="true" style="margin-bottom:14px">⚜</div>
+    <h1>Lista de asistencia</h1>
+    <p class="hint" style="margin:0 0 16px">Escribe el código de acceso de los monitores.</p>
+    <label for="pw">Código de acceso</label>
+    <div class="add"><input type="password" id="pw" autocomplete="current-password"><button class="btn" id="go">Entrar</button></div>
+    <p class="err" id="err" role="alert"></p>
+  </div>
+</div>
+<div class="wrap" hidden>
+  <header>
+    <div class="logo" aria-hidden="true">⚜</div>
+    <div><h1>Lista de asistencia</h1><p>Grupo scout · reunión de los sábados</p><p id="st" aria-live="polite" style="font-size:.78rem"></p></div><button class="del" id="out" style="margin-left:auto">Salir</button>
+  </header>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-lista" aria-selected="true" data-tab="lista">Pasar lista</button>
+    <button role="tab" id="t-ninos" aria-selected="false" data-tab="ninos">Niños</button>
+  </div>
+  <main id="app"></main>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,doc,setDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+/* ====== PEGA AQUÍ TUS DATOS DE FIREBASE (paso 3 de la guía) ====== */
+const firebaseConfig={
+  apiKey:"AIzaSyBx82GLSDJ9K2MdSszSll8BZyDfp6s4-9k",
+  authDomain:"lista-de-scouts-la-nucia.firebaseapp.com",
+  projectId:"lista-de-scouts-la-nucia",
+  storageBucket:"lista-de-scouts-la-nucia.firebasestorage.app",
+  messagingSenderId:"276968590796",
+  appId:"1:276968590796:web:e03b81d909781f90caa169"
+};
+/* Correo del usuario compartido que creas en Firebase (paso 4) */
+const MONITOR_EMAIL="monitores@scoutslanucia.com";
+/* ================================================================= */
+
+const KEY='scouts-asistencia-v1';
+let S={kids:[],att:{},extras:[]};
+let lastJson='';
+function status(t){const e=document.getElementById('st');if(e)e.textContent=t}
+const app=initializeApp(firebaseConfig),auth=getAuth(app),fdb=getFirestore(app),ref=doc(fdb,'asistencia','estado');
+function save(){
+  const j=JSON.stringify(S);lastJson=j;status('Guardando…');
+  setDoc(ref,{json:j}).then(()=>status('✓ Todo guardado'),()=>status('No se pudo guardar. Revisa la conexión.'));
+}
+
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const longDate=s=>parse(s).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+function lastSaturday(){const d=new Date();d.setHours(0,0,0,0);while(d.getDay()!==6)d.setDate(d.getDate()-1);return d}
+function sessions(){
+  const set=new Set(S.extras);Object.keys(S.att).forEach(k=>set.add(k));
+  const ls=lastSaturday();
+  for(let w=-9;w<=2;w++){const d=new Date(ls);d.setDate(d.getDate()+7*w);set.add(iso(d))}
+  return [...set].sort();
+}
+let tab='lista',sel=iso(lastSaturday()),armed=null,msg='';
+
+function counts(date){
+  const a=S.att[date]||{};let y=0,n=0;
+  S.kids.forEach(k=>{if(a[k.id]===true)y++;else if(a[k.id]===false)n++});
+  return {y,n,u:S.kids.length-y-n};
+}
+
+function viewLista(){
+  const list=sessions();
+  if(!list.includes(sel))sel=list[list.length-1];
+  const isExtra=S.extras.includes(sel);
+  const c=counts(sel),tot=S.kids.length||1;
+  let h='<div class="chips" role="group" aria-label="Fechas">';
+  list.forEach(d=>{const dt=parse(d);
+    h+=`<button class="chip" data-act="sel" data-d="${d}" aria-pressed="${d===sel}">${S.extras.includes(d)?'<i>Extra</i>':''}<span>${dt.toLocaleDateString('es-ES',{weekday:'short'})}</span><b>${dt.getDate()}</b><span>${dt.toLocaleDateString('es-ES',{month:'short'})}</span></button>`});
+  h+='</div>';
+  h+=`<section class="panel"><div class="sum"><div><h2>${longDate(sel)}</h2><div class="legend">${isExtra?'Día excepcional':'Reunión de sábado'}</div></div><div class="count">${c.y}<small> / ${S.kids.length} presentes</small></div></div>
+  <div class="bar" aria-hidden="true"><div class="y" style="width:${c.y/tot*100}%"></div><div class="n" style="width:${c.n/tot*100}%"></div></div>
+  <div class="legend"><span>Están: ${c.y}</span><span>No están: ${c.n}</span><span>Sin marcar: ${c.u}</span></div>`;
+  if(S.kids.length){
+    h+='<div style="margin-top:8px">';
+    const a=S.att[sel]||{};
+    S.kids.forEach(k=>{h+=`<div class="row"><div class="name">${esc(k.name)}</div><div class="tog"><button class="y" data-act="mark" data-k="${k.id}" data-v="1" aria-pressed="${a[k.id]===true}">Está</button><button class="n" data-act="mark" data-k="${k.id}" data-v="0" aria-pressed="${a[k.id]===false}">No está</button></div></div>`});
+    h+='</div><div class="actions"><button class="btn ghost" data-act="all">Marcar todos como presentes</button><button class="btn ghost" data-act="clear">Borrar marcas</button></div>';
+  } else h+='<div class="empty">Todavía no hay niños en la lista.<br>Añádelos en la pestaña «Niños».</div>';
+  h+='</section>';
+  h+=`<section class="panel"><label for="xd">Añadir un día excepcional (campamento, salida, reunión extra…)</label><div class="add"><input type="date" id="xd" value="${sel}"><button class="btn" data-act="addday">Añadir día</button></div>`;
+  if(msg)h+=`<p class="hint">${msg}</p>`;
+  if(isExtra)h+=`<div class="actions"><button class="btn danger" data-act="delday">${armed==='day'?'¿Seguro? Pulsa otra vez para quitar':'Quitar este día excepcional'}</button></div>`;
+  h+='</section>';
+  return h;
+}
+
+function viewNinos(){
+  const dates=Object.keys(S.att).filter(d=>Object.values(S.att[d]).some(v=>v!==undefined));
+  let h=`<section class="panel"><label for="nn">Nombre del niño o niña</label><div class="add"><input type="text" id="nn" maxlength="50" placeholder="Ej. Lucía Martínez" autocomplete="off"><button class="btn" data-act="addkid">Añadir</button></div></section><section class="panel">`;
+  if(!S.kids.length)h+='<div class="empty">La lista está vacía. Escribe un nombre arriba y pulsa «Añadir».</div>';
+  S.kids.forEach(k=>{
+    const pres=dates.filter(d=>S.att[d][k.id]===true).length;
+    h+=`<div class="row"><div class="name">${esc(k.name)}<small>${pres} de ${dates.length} reuniones con asistencia</small></div><button class="del" data-act="delkid" data-k="${k.id}">${armed===k.id?'¿Seguro?':'Eliminar'}</button></div>`});
+  h+='</section>';
+  return h;
+}
+
+function render(){
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  document.getElementById('app').innerHTML=tab==='lista'?viewLista():viewNinos();
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act],[data-tab]');if(!t)return;
+  if(t.dataset.tab){tab=t.dataset.tab;armed=null;msg='';render();return}
+  const act=t.dataset.act;
+  if(act!=='delkid'&&act!=='delday')armed=null;
+  if(act==='sel'){sel=t.dataset.d;msg=''}
+  else if(act==='mark'){const a=S.att[sel]=S.att[sel]||{};const v=t.dataset.v==='1';a[t.dataset.k]=a[t.dataset.k]===v?undefined:v;if(a[t.dataset.k]===undefined)delete a[t.dataset.k];save()}
+  else if(act==='all'){const a=S.att[sel]=S.att[sel]||{};S.kids.forEach(k=>a[k.id]=true);save()}
+  else if(act==='clear'){delete S.att[sel];save()}
+  else if(act==='addday'){const v=document.getElementById('xd').value;
+    if(!v)msg='Elige una fecha.';
+    else if(sessions().includes(v)){sel=v;msg=parse(v).getDay()===6?'Ese sábado ya está en la lista.':'Ese día ya está añadido.'}
+    else{S.extras.push(v);sel=v;msg='Día añadido.';save()}}
+  else if(act==='delday'){if(armed==='day'){S.extras=S.extras.filter(d=>d!==sel);delete S.att[sel];armed=null;msg='';save()}else armed='day'}
+  else if(act==='addkid'){const i=document.getElementById('nn'),n=i.value.trim();
+    if(n){S.kids.push({id:'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n});save()}}
+  else if(act==='delkid'){const id=t.dataset.k;
+    if(armed===id){S.kids=S.kids.filter(k=>k.id!==id);Object.values(S.att).forEach(a=>delete a[id]);armed=null;save()}else armed=id}
+  render();
+  if(act==='addkid'){const i=document.getElementById('nn');if(i)i.focus()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nn')document.querySelector('[data-act="addkid"]').click()});
+render();
+const loginEl=document.getElementById('login'),wrapEl=document.querySelector('.wrap'),errEl=document.getElementById('err');
+let unsub=null;
+function enter(){
+  const pw=document.getElementById('pw');errEl.textContent='';
+  signInWithEmailAndPassword(auth,MONITOR_EMAIL,pw.value).catch(()=>{errEl.textContent='Código incorrecto. Inténtalo de nuevo.'});
+}
+document.getElementById('go').addEventListener('click',enter);
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')enter()});
+document.getElementById('out').addEventListener('click',()=>signOut(auth));
+onAuthStateChanged(auth,user=>{
+  if(user){
+    loginEl.hidden=true;wrapEl.hidden=false;status('Conectando…');
+    unsub=onSnapshot(ref,snap=>{
+      if(snap.metadata.hasPendingWrites)return;
+      if(snap.exists()){
+        const j=snap.data().json;
+        if(j&&j!==lastJson){
+          try{S=Object.assign({kids:[],att:{},extras:[]},JSON.parse(j));lastJson=j}catch(e){return}
+          const a=document.activeElement;
+          if(!(a&&a.tagName==='INPUT'&&a.value))render();
+        }
+      }
+      status('✓ Todo guardado');
+    },()=>status('Sin acceso a la base de datos'));
+  }else{
+    if(unsub){unsub();unsub=null}
+    wrapEl.hidden=true;loginEl.hidden=false;
+  }
+});
+</script>
+</body>
+</html>
