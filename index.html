@@ -173,27 +173,6 @@ const $=id=>document.getElementById(id);
 const today=new Date(); const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const addDays=(date,n)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
 function initialData(){return {members:[],dates:[],attendance:{},settings:{}}}
-/* Sábados automáticos: siempre existen los 3 próximos. Se crean de uno en uno al llegar cada sábado.
-   data.autoUntil guarda hasta qué sábado se ha generado, para no volver a crear los que borres. */
-function lastSat(){const x=new Date();x.setHours(12,0,0,0);while(x.getDay()!==6)x.setDate(x.getDate()-1);return iso(x)}
-function isPlainSat(d){return new Date(d.date+'T12:00:00').getDay()===6&&d.name==='Reunión de sábado'&&d.status==='actividad'&&!d.description}
-function ensureSaturdays(){
-  const L=lastSat(),target=addDays(L,21);let changed=false;
-  if(!data.autoUntil){
-    if(data.dates.length){
-      const before=data.dates.length;
-      data.dates=data.dates.filter(d=>!(d.date>target&&isPlainSat(d)&&!Object.keys(data.attendance[d.date]||{}).length));
-      data.autoUntil=L;changed=data.dates.length!==before;
-    }else data.autoUntil=iso(new Date())===L?addDays(L,-7):L;
-    changed=true;
-  }
-  let next=addDays(data.autoUntil,7);
-  while(next<=target){
-    if(!data.dates.some(d=>d.date===next))data.dates.push({id:'sab-'+next,date:next,name:'Reunión de sábado',status:'actividad',description:''});
-    data.autoUntil=next;next=addDays(next,7);changed=true;
-  }
-  return changed;
-}
 function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
 let data=initialData(), currentDate='';if(!data.settings)data.settings={};
 function setSaveStatus(message, error=false){const el=$('saveStatus');if(el){el.textContent=message;el.style.color=error?'#ffe0df':'#d9f0e4'}}
@@ -324,8 +303,7 @@ $('loginForm').addEventListener('submit',async e=>{
 });
 $('logoutButton').addEventListener('click',()=>signOut(auth));
 let unsubs=[],gotMain=false,gotSet=false;
-function ready(){if(gotMain&&gotSet&&!synced){synced=true;ensureSaturdays();render();persist()}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&synced&&ensureSaturdays())render()});
+function ready(){if(gotMain&&gotSet&&!synced){synced=true;render();persist()}}
 function typingInAwards(){const a=document.activeElement;return !!(a&&a.closest&&a.closest('#awardEditor'))}
 function dbError(err){setSaveStatus('⚠ No se puede leer la base de datos ('+((err&&err.code)||'error')+').',true)}
 onAuthStateChanged(auth,user=>{
