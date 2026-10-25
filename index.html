@@ -169,7 +169,29 @@ const refMain=doc(fdb,'asistencia','estado'),refSet=doc(fdb,'asistencia','ajuste
 const $=id=>document.getElementById(id);
 const today=new Date(); const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const addDays=(date,n)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
-function initialData(){let dates=[];let d=iso(today);for(let i=0;i<84;i++){let dt=addDays(d,i);if(new Date(dt+'T12:00:00').getDay()===6)dates.push({id:uid(),date:dt,name:'Reunión de sábado',status:'actividad',description:''})}return {members:[],dates,attendance:{},settings:{}}}
+function initialData(){return {members:[],dates:[],attendance:{},settings:{}}}
+/* Sábados automáticos: siempre existen los 3 próximos. Se crean de uno en uno al llegar cada sábado.
+   data.autoUntil guarda hasta qué sábado se ha generado, para no volver a crear los que borres. */
+function lastSat(){const x=new Date();x.setHours(12,0,0,0);while(x.getDay()!==6)x.setDate(x.getDate()-1);return iso(x)}
+function isPlainSat(d){return new Date(d.date+'T12:00:00').getDay()===6&&d.name==='Reunión de sábado'&&d.status==='actividad'&&!d.description}
+function ensureSaturdays(){
+  const L=lastSat(),target=addDays(L,21);let changed=false;
+  if(!data.autoUntil){
+    if(data.dates.length){
+      /* datos anteriores: quitar los sábados automáticos sin tocar de más adelante */
+      const before=data.dates.length;
+      data.dates=data.dates.filter(d=>!(d.date>target&&isPlainSat(d)&&!Object.keys(data.attendance[d.date]||{}).length));
+      data.autoUntil=L;changed=data.dates.length!==before;
+    }else data.autoUntil=iso(new Date())===L?addDays(L,-7):L;
+    changed=true;
+  }
+  let next=addDays(data.autoUntil,7);
+  while(next<=target){
+    if(!data.dates.some(d=>d.date===next))data.dates.push({id:'sab-'+next,date:next,name:'Reunión de sábado',status:'actividad',description:''});
+    data.autoUntil=next;next=addDays(next,7);changed=true;
+  }
+  return changed;
+}
 function uid(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
 let data=initialData(), currentDate='';if(!data.settings)data.settings={};
 function setSaveStatus(message, error=false){const el=$('saveStatus');if(el){el.textContent=message;el.style.color=error?'#ffe0df':'#d9f0e4'}}
@@ -197,7 +219,7 @@ function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function fmt(s){if(!s)return 'Sin fecha';return new Date(s+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
 function attendanceFor(date){if(!data.attendance[date])data.attendance[date]={};return data.attendance[date]}
 function statusOf(date,member){return attendanceFor(date)[member]||'pendiente'}
-function dateOptions(){let sel=$('attendanceDate');let previous=currentDate||sel.value;let sorted=[...data.dates].sort((a,b)=>a.date.localeCompare(b.date));sel.innerHTML=sorted.length?sorted.map(d=>`<option value="${d.date}" ${d.date===previous?'selected':''}>${esc(fmt(d.date))}${d.status==='sin actividad'?' · Sin actividad':''}</option>`).join(''):'<option value="">Añade un día en “Días y programación”</option>';currentDate=sel.value||''}
+function dateOptions(){let sel=$('attendanceDate');let sorted=[...data.dates].sort((a,b)=>a.date.localeCompare(b.date));let previous=currentDate;if(!previous||!sorted.some(d=>d.date===previous)){const t=iso(new Date());const past=sorted.filter(d=>d.date<=t);previous=(past.length?past[past.length-1]:sorted[0]||{}).date||''}sel.innerHTML=sorted.length?sorted.map(d=>`<option value="${d.date}" ${d.date===previous?'selected':''}>${esc(fmt(d.date))}${d.status==='sin actividad'?' · Sin actividad':''}</option>`).join(''):'<option value="">Añade un día en “Días y programación”</option>';currentDate=sel.value||''}
 function renderAttendance(){dateOptions();let date=currentDate;let session=data.dates.find(d=>d.date===date);$('datePill').textContent=fmt(date);$('sessionInfo').innerHTML=session?`<div class="notice" style="${session.status==='sin actividad'?'background:#fff0f0;border-color:#efc2c2;color:#8b3333':''}"><strong>${esc(session.name|| (session.status==='actividad'?'Actividad scout':'Sin actividad'))}</strong>${session.description?`<div style="margin-top:6px;white-space:pre-wrap">${esc(session.description)}</div>`:''}${session.status==='sin actividad'?'<div style="margin-top:5px">Este día está marcado como sin actividad. Puedes mantenerlo en el calendario sin pasar lista.</div>':''}</div>`:'<p class="muted">No hay ningún día configurado. Añade uno en “Días y programación”.</p>';
 let list=data.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));let counts={presente:0,ausente:0,justificado:0,pendiente:0};list.forEach(m=>counts[statusOf(date,m)]++);$('countPresent').textContent=counts.presente;$('countAbsent').textContent=counts.ausente;$('countExcused').textContent=counts.justificado;$('countPending').textContent=counts.pendiente;
 $('attendanceTable').innerHTML=!date?'<div class="empty">Añade un día para empezar.</div>':!list.length?'<div class="empty">Todavía no hay integrantes. Añádelos en la pestaña “Integrantes”.</div>':`<table><thead><tr><th>Integrante</th><th>Asistencia</th></tr></thead><tbody>${list.map(m=>`<tr><td class="namecell">${esc(m.name)}${m.nickname?`<div class="muted small">${esc(m.nickname)}</div>`:''}</td><td><div class="statusset">${[['presente','✓ Presente'],['ausente','— Ausente'],['justificado','✓ Justificado'],['pendiente','Sin marcar']].map(([v,t])=>`<button class="status ${statusOf(date,m.id)===v?'selected':''}" data-status="${v}" data-member="${m.id}">${t}</button>`).join('')}</div></td></tr>`).join('')}</tbody></table>`;
@@ -294,7 +316,8 @@ $('loginForm').addEventListener('submit',async e=>{
 });
 $('logoutButton').addEventListener('click',()=>signOut(auth));
 let unsubs=[],gotMain=false,gotSet=false;
-function ready(){if(gotMain&&gotSet&&!synced){synced=true;render();persist()}}
+function ready(){if(gotMain&&gotSet&&!synced){synced=true;ensureSaturdays();render();persist()}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&synced&&ensureSaturdays())render()});
 function typingInAwards(){const a=document.activeElement;return !!(a&&a.closest&&a.closest('#awardEditor'))}
 function dbError(err){setSaveStatus('⚠ No se puede leer la base de datos ('+((err&&err.code)||'error')+').',true)}
 onAuthStateChanged(auth,user=>{
